@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\User\UserResource;
+use App\Actions\User\LoginAction;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Actions\User\LoginAction;
+
+
+
 
 
 class UserApiController extends Controller
@@ -17,7 +20,6 @@ class UserApiController extends Controller
 
     public function login(LoginRequest $request, LoginAction $loginAction)
     {
-
         try {
 
             $response = $this->respondWithToken( $loginAction->attempt($request) );
@@ -31,7 +33,6 @@ class UserApiController extends Controller
             ], Response::HTTP_NOT_FOUND);
 
         }
-
     }
 
     public function logout( Request $request )
