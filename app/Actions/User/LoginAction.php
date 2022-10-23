@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Exception;
 
-
 Class LoginAction {
 
     private $token_string;
