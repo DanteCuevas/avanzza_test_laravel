@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\UserApiController;
+use App\Http\Controllers\Api\FileApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,5 +20,12 @@ Route::post('login',                [UserApiController::class,     'login']);
 Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/access',           [UserApiController::class,     'access']);
+
+    //API FILES
+    Route::prefix('files')->group(function () {
+        Route::controller(FileApiController::class)->group(function () {
+            Route::post('/', 'store');
+        });
+    });
 
 });
