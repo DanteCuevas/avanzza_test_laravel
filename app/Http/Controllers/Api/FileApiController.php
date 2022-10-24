@@ -13,6 +13,7 @@ use App\Models\File;
 use App\Services\File\FileService;
 use App\Services\File\MultipleFileService;
 use App\Actions\File\MultipleFileAction;
+use App\Actions\File\DeleteFileAction;
 
 class FileApiController extends Controller
 {
@@ -80,8 +81,20 @@ class FileApiController extends Controller
 
     }
 
-    public function destroy($id)
+    public function destroy(File $file, $type, DeleteFileAction $deleteFileAction)
     {
-        //
+        try {
+            
+            $deleteFileAction->execute($file, $type);
+            return response()->json( [], 204);
+
+        } catch (Exception $e) {
+
+            return response()->json([
+                'status'    => false,
+                'message'   => $e->getMessage()
+            ], $e->getCode());
+
+        }
     }
 }

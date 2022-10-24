@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
+use App\Models\File;
 use Tests\TestCase;
 
 class FilesTest extends TestCase
@@ -180,6 +181,39 @@ class FilesTest extends TestCase
                 "multiple_files.0.file_name"    => ["The multiple_files.0.file_name must not be greater than 100 characters."],
             ]
         ]);
+
+    }
+
+    public function test_file_delete_success()
+    {
+
+        $file = File::orderby('id', 'asc')->where('file_exist', true)->first();
+        $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/normal');
+        $response->assertStatus(204);
+        $this->assertNull(File::find($file->id));
+        Storage::disk('public')->assertMissing('files/' . $file->file);
+
+    }
+
+    public function test_file_delete_success_logical()
+    {
+
+        $file = File::orderby('id', 'asc')->where('file_exist', true)->first();
+        $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/logical');
+        $response->assertStatus(204);
+        $this->assertNull(File::find($file->id));
+        Storage::disk('public')->assertExists('files/deleted' . $file->file);
+
+    }
+
+    public function test_file_delete_success_physical()
+    {
+
+        $file = File::orderby('id', 'asc')->where('file_exist', true)->first();
+        $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/physical');
+        $response->assertStatus(204);
+        $this->assertNotNull(File::find($file->id));
+        Storage::disk('public')->assertMissing('files/' . $file->file);
 
     }
 
