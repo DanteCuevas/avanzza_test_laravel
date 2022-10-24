@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\File\FileRequest;
+use App\Http\Requests\File\MultipleFileRequest;
 use App\Http\Resources\File\FileResource;
 use App\Http\Resources\File\FileCollection;
+use App\Http\Resources\File\MultipleFileCollection;
 use App\Models\File;
 use App\Services\File\FileService;
+use App\Services\File\MultipleFileService;
+use App\Actions\File\MultipleFileAction;
 
 class FileApiController extends Controller
 {
@@ -48,7 +52,29 @@ class FileApiController extends Controller
             return response()->json([
                 'status'    => false,
                 'message'   => $e->getMessage()
-            ], Response::HTTP_NOT_FOUND);
+            ], $e->getCode());
+
+        }
+
+    }
+
+    public function multipleStore(MultipleFileRequest $request, MultipleFileService $multipleFileService, MultipleFileAction $multipleFileAction)
+    {
+
+        try {
+
+            $fileNames = $multipleFileService->setPrefix('multiple_files')
+                ->multipleUpload($request->multiple_files);
+            $files = $multipleFileAction->save($fileNames);
+            
+            return response()->json( new MultipleFileCollection($files), 201);
+
+        } catch (Exception $e) {
+
+            return response()->json([
+                'status'    => false,
+                'message'   => $e->getMessage()
+            ], $e->getCode());
 
         }
 
