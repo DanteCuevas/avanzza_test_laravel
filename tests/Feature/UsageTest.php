@@ -21,8 +21,8 @@ class UsageTest extends TestCase
     {
         parent::setUp();
         $this->credentials = [
-            'email'     => 'danieldantecuevas@gmail.com',
-            'password'  => '12345678'
+            'email'     => env('USER_EMAIL'),
+            'password'  => env('USER_PWD'),
         ];
         $response = $this->json('POST', 'api/login', $this->credentials, ['Accept'=>'application/json']);
         $this->token = $response->getData()->token;
