@@ -27,6 +27,7 @@ Route::middleware(['auth:api'])->group(function () {
             Route::get('/', 'index');
             Route::post('/', 'store');
             Route::post('/multiple-files', 'multipleStore');
+            Route::delete('/{file}/type/{type}', 'destroy');
         });
     });
 

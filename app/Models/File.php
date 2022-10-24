@@ -31,7 +31,7 @@ class File extends Model
 
     public function getFileUrlAttribute()
     {
-        return env("APP_URL").'/storage/'.env("FILES_DIR").'/'.$this->file;
+        return env("APP_URL").'/storage/'.$this->file;
     }
 
 }

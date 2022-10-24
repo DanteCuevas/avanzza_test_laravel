@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
+use App\Models\File;
 use Tests\TestCase;
 
 class FilesTest extends TestCase
@@ -52,7 +53,7 @@ class FilesTest extends TestCase
             ]
         ]);
         $data = $response->getData()->data;
-        Storage::disk('public')->assertExists('files/' . $data->file);
+        Storage::disk('public')->assertExists($data->file);
     }
 
     public function test_file_create_request_required()
@@ -133,7 +134,7 @@ class FilesTest extends TestCase
         $response->assertStatus(201);
         $data = $response->getData()->data;
         foreach ($data as $key => $file) {
-            Storage::disk('public')->assertExists('files/' . $file->file);
+            Storage::disk('public')->assertExists($file->file);
         }
     }
 
@@ -178,6 +179,55 @@ class FilesTest extends TestCase
             "errors"    => [
                 "multiple_files.0.file"         => ["The multiple_files.0.file must not be greater than 500 kilobytes."],
                 "multiple_files.0.file_name"    => ["The multiple_files.0.file_name must not be greater than 100 characters."],
+            ]
+        ]);
+
+    }
+
+    public function test_file_delete_success()
+    {
+
+        $file = File::orderby('id', 'asc')->where('file_exist', true)->first();
+        $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/normal');
+        $response->assertStatus(204);
+        $this->assertNull(File::find($file->id));
+        Storage::disk('public')->assertMissing($file->file);
+
+    }
+
+    public function test_file_delete_success_logical()
+    {
+
+        $file = File::orderby('id', 'asc')->where('file_exist', true)->first();
+        $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/logical');
+        $response->assertStatus(204);
+        $this->assertNull(File::find($file->id));
+        $fileDeleted = str_replace('/', '/deleted.', $file->file);
+        Storage::disk('public')->assertExists($fileDeleted);
+
+    }
+
+    public function test_file_delete_success_physical()
+    {
+
+        $file = File::orderby('id', 'asc')->where('file_exist', true)->first();
+        $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/physical');
+        $response->assertStatus(204);
+        $this->assertNotNull(File::find($file->id));
+        Storage::disk('public')->assertMissing($file->file);
+
+    }
+
+    public function test_file_delete_required()
+    {
+
+        $file = File::orderby('id', 'asc')->where('file_exist', true)->first();
+        $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/other');
+        $response->assertStatus(422);
+        $response->assertJson([
+            "message"   => "The given data was invalid.",
+            "errors"    => [
+                "type"          => ["The type must be normal,logical,physical."]
             ]
         ]);
 

@@ -13,7 +13,7 @@ Class MultipleFileService extends FileService {
         $fileNames = [];
         foreach ($files as $key => $file) {
 
-            $newFile = $this->upload($file['file']);
+            $newFile = $this->setUnique()->upload($file['file']);
             $fileNames[] = [
                 'file'      => $newFile,
                 'file_name' => $file['file_name']

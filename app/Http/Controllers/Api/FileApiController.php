@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\File\FileRequest;
 use App\Http\Requests\File\MultipleFileRequest;
+use App\Http\Requests\File\DeleteFileRequest;
 use App\Http\Resources\File\FileResource;
 use App\Http\Resources\File\FileCollection;
 use App\Http\Resources\File\MultipleFileCollection;
@@ -13,6 +14,7 @@ use App\Models\File;
 use App\Services\File\FileService;
 use App\Services\File\MultipleFileService;
 use App\Actions\File\MultipleFileAction;
+use App\Actions\File\DeleteFileAction;
 
 class FileApiController extends Controller
 {
@@ -80,8 +82,20 @@ class FileApiController extends Controller
 
     }
 
-    public function destroy($id)
+    public function destroy(DeleteFileRequest $request, File $file, $type, DeleteFileAction $deleteFileAction)
     {
-        //
+        try {
+            
+            $deleteFileAction->execute($file, $type);
+            return response()->json( [], 204);
+
+        } catch (Exception $e) {
+
+            return response()->json([
+                'status'    => false,
+                'message'   => $e->getMessage()
+            ], $e->getCode());
+
+        }
     }
 }
