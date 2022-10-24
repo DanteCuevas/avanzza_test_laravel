@@ -218,4 +218,19 @@ class FilesTest extends TestCase
 
     }
 
+    public function test_file_delete_required()
+    {
+
+        $file = File::orderby('id', 'asc')->where('file_exist', true)->first();
+        $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/other');
+        $response->assertStatus(422);
+        $response->assertJson([
+            "message"   => "The given data was invalid.",
+            "errors"    => [
+                "type"          => ["The type must be normal,logical,physical."]
+            ]
+        ]);
+
+    }
+
 }

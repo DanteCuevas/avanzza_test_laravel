@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\File\FileRequest;
 use App\Http\Requests\File\MultipleFileRequest;
+use App\Http\Requests\File\DeleteFileRequest;
 use App\Http\Resources\File\FileResource;
 use App\Http\Resources\File\FileCollection;
 use App\Http\Resources\File\MultipleFileCollection;
@@ -81,7 +82,7 @@ class FileApiController extends Controller
 
     }
 
-    public function destroy(File $file, $type, DeleteFileAction $deleteFileAction)
+    public function destroy(DeleteFileRequest $request, File $file, $type, DeleteFileAction $deleteFileAction)
     {
         try {
             
