@@ -24,6 +24,7 @@ Route::middleware(['auth:api'])->group(function () {
     //API FILES
     Route::prefix('files')->group(function () {
         Route::controller(FileApiController::class)->group(function () {
+            Route::get('/', 'index');
             Route::post('/', 'store');
         });
     });

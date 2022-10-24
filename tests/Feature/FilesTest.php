@@ -89,4 +89,27 @@ class FilesTest extends TestCase
 
     }
 
+    public function test_files_get_with_paginate()
+    {
+
+        $response = $this->withHeaders($this->headers)->get('api/files');
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data'  => [
+                '*'     => [
+                    'id', 'file', 'file_name', 'file_url', 'created_at', 'file_exist',
+                    'user'      => [
+                        'id', 'name', 'email',
+                    ]
+                ]
+            ],
+            'meta'  => [
+                'current_page', 'from', 'last_page', 'per_page', 'to', 'total'
+            ]
+        ]);
+
+    }
+
 }
