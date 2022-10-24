@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\File\FileRequest;
 use App\Http\Resources\File\FileResource;
+use App\Http\Resources\File\FileCollection;
 use App\Models\File;
 use App\Services\File\FileService;
 
@@ -18,7 +19,12 @@ class FileApiController extends Controller
      */
     public function index()
     {
-        //
+
+        $files = File::orderBy('id', 'desc')
+            ->with('user')->paginate(10);
+
+        return new FileCollection($files);
+
     }
 
     /**
