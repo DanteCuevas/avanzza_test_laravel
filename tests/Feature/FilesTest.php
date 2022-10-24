@@ -53,7 +53,7 @@ class FilesTest extends TestCase
             ]
         ]);
         $data = $response->getData()->data;
-        Storage::disk('public')->assertExists('files/' . $data->file);
+        Storage::disk('public')->assertExists($data->file);
     }
 
     public function test_file_create_request_required()
@@ -134,7 +134,7 @@ class FilesTest extends TestCase
         $response->assertStatus(201);
         $data = $response->getData()->data;
         foreach ($data as $key => $file) {
-            Storage::disk('public')->assertExists('files/' . $file->file);
+            Storage::disk('public')->assertExists($file->file);
         }
     }
 
@@ -191,7 +191,7 @@ class FilesTest extends TestCase
         $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/normal');
         $response->assertStatus(204);
         $this->assertNull(File::find($file->id));
-        Storage::disk('public')->assertMissing('files/' . $file->file);
+        Storage::disk('public')->assertMissing($file->file);
 
     }
 
@@ -202,7 +202,8 @@ class FilesTest extends TestCase
         $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/logical');
         $response->assertStatus(204);
         $this->assertNull(File::find($file->id));
-        Storage::disk('public')->assertExists('files/deleted' . $file->file);
+        $fileDeleted = str_replace('/', '/deleted.', $file->file);
+        Storage::disk('public')->assertExists($fileDeleted);
 
     }
 
@@ -213,7 +214,7 @@ class FilesTest extends TestCase
         $response = $this->withHeaders($this->headers)->delete('/api/files/'.$file->id.'/type/physical');
         $response->assertStatus(204);
         $this->assertNotNull(File::find($file->id));
-        Storage::disk('public')->assertMissing('files/' . $file->file);
+        Storage::disk('public')->assertMissing($file->file);
 
     }
 

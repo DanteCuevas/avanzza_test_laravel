@@ -12,15 +12,15 @@ Class DeleteFileAction {
 
         switch ($type) {
             case 'normal':
-                Storage::disk('public')->delete(env('FILES_DIR').'/'.$file->file); 
+                Storage::disk('public')->delete($file->file);
                 $file->delete();
                 break;
             case 'logical':
-                Storage::disk('public')->move(env('FILES_DIR').'/'.$file->file, $this->newName($file->file));
+                Storage::disk('public')->move($file->file, $this->newName($file->file));
                 $file->delete();
                 break;
             case 'physical':
-                Storage::disk('public')->delete(env('FILES_DIR').'/'.$file->file); 
+                Storage::disk('public')->delete($file->file);
                 $file->file_exist = false;
                 $file->save();
                 break;
@@ -32,7 +32,7 @@ Class DeleteFileAction {
 
     public function newName($name)
     {
-        return env('FILES_DIR').'/deleted'.$name;
+        return str_replace('/', '/deleted.', $name);
     }
 
 }

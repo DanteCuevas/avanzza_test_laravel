@@ -6,6 +6,7 @@ Class FileService {
 
     private $prefix = 'upload_';
     private $dir;
+    private $unique;
 
     public function __construct() 
     {
@@ -17,7 +18,7 @@ Class FileService {
 
         $fileName = $this->getUniqueFileName() .'.'. $file->extension();
         $response = $file->storeAs($this->dir, $fileName);
-        return $fileName;
+        return str_replace('public/', '', $response);
 
     }
 
@@ -33,9 +34,15 @@ Class FileService {
         return $this;
     }
 
+    public function setUnique(): FileService
+    {
+        $this->unique = rand(1, 100);
+        return $this;
+    }
+
     private function getUniqueFileName()
     {
-        return $this->prefix . $this->getUserId() . $this->getUniqueTime();
+        return $this->prefix . $this->unique . $this->getUserId() . $this->getUniqueTime();
     }
 
     private function getUniqueTime()
