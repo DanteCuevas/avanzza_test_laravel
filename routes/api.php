@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\UserApiController;
 use App\Http\Controllers\Api\FileApiController;
+use App\Http\Controllers\Api\UsageApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,14 +22,26 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/access',           [UserApiController::class,     'access']);
 
-    //API FILES
-    Route::prefix('files')->group(function () {
-        Route::controller(FileApiController::class)->group(function () {
-            Route::get('/', 'index');
-            Route::post('/', 'store');
-            Route::post('/multiple-files', 'multipleStore');
-            Route::delete('/{file}/type/{type}', 'destroy');
+    
+    Route::middleware(['usage'])->group(function () {
+
+        //API FILES
+        Route::prefix('files')->group(function () {
+            Route::controller(FileApiController::class)->group(function () {
+                Route::get('/', 'index');
+                Route::post('/', 'store');
+                Route::post('/multiple-files', 'multipleStore');
+                Route::delete('/{file}/type/{type}', 'destroy');
+            });
+        });
+
+        //API USAGE
+        Route::prefix('usages')->group(function () {
+            Route::controller(UsageApiController::class)->group(function () {
+                Route::get('/', 'index');
+            });
         });
     });
+    
 
 });
