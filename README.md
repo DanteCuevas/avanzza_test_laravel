@@ -1,8 +1,5 @@
 ## Project Specifications
 
-**Read-Only Files**
-- tests/*
-
 **Environment**  
 
 - PHP version: 8.0
